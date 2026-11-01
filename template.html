@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Research News</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: a single centered 85% table-like column, orange masthead, numbered rows, grey subtext, HN-style */
+:root {
+  --page: #f6f6ef;
+  --ground: #ffffff;
+  --bar: #ff6600;
+  --bar-ink: #000000;
+  --ink: #000000;
+  --muted: #828282;
+  --visited: #828282;
+  --rule: #ff6600;
+  --hl: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #a0a0a0;
+  --font: Verdana, Geneva, "DejaVu Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #1d1d1b; --ground: #121211; --bar: #e05a00; --bar-ink: #0b0b0a;
+    --ink: #e6e4dc; --muted: #8e8c84; --visited: #8e8c84; --rule: #e05a00; --hl: #f1efe7;
+    --input-bg: #2a2a27; --input-border: #555550; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #1d1d1b; --ground: #121211; --bar: #e05a00; --bar-ink: #0b0b0a;
+  --ink: #e6e4dc; --muted: #8e8c84; --visited: #8e8c84; --rule: #e05a00; --hl: #f1efe7;
+  --input-bg: #2a2a27; --input-border: #555550; color-scheme: dark;
+}
+body {
+  background: var(--ground); color: var(--ink); font-family: var(--font); font-size: 10pt;
+  padding-left: max(8px, env(safe-area-inset-left, 0px)); padding-right: max(8px, env(safe-area-inset-right, 0px));
+  padding-block: 8px;
+}
+a { color: inherit; text-decoration: none; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--bar); outline-offset: 1px; }
+#hn { width: 85%; max-width: 1200px; margin: 0 auto; background: var(--page); min-width: 0; }
+@media (max-width: 750px) { #hn { width: 100%; } body { padding-block: 0; } }
+
+/* masthead */
+.top { background: var(--bar); color: var(--bar-ink); display: flex; align-items: center; gap: 6px; padding: 2px; flex-wrap: wrap; }
+.logo { width: 18px; height: 18px; border: 1px solid var(--hl); display: inline-grid; place-items: center; color: var(--hl); font-weight: bold; font-size: 10pt; flex: none; }
+.brand { font-weight: bold; margin-right: 6px; cursor: pointer; }
+.nav { display: flex; flex-wrap: wrap; gap: 0; align-items: center; flex: 1 1 auto; min-width: 0; }
+.nav a { cursor: pointer; white-space: nowrap; }
+.nav a.on { color: var(--hl); }
+.nav .sep { padding: 0 4px; }
+.top .right { margin-left: auto; padding-right: 4px; white-space: nowrap; }
+.top .right a { cursor: pointer; }
+
+/* list */
+.list { padding: 10px 0 0; }
+.item { display: grid; grid-template-columns: auto 14px 1fr; column-gap: 4px; align-items: baseline; }
+.rank { color: var(--muted); text-align: right; min-width: 2.2em; }
+.vote { cursor: pointer; background: none; border: 0; padding: 0; width: 14px; height: 14px; align-self: start; margin-top: 3px; }
+.vote svg { width: 10px; height: 10px; display: block; margin: 0 auto; fill: var(--muted); }
+.vote.saved svg { fill: var(--bar); }
+.titleline { min-width: 0; font-size: 10pt; line-height: 1.3; }
+.titleline > a.t:visited { color: var(--visited); }
+.site { color: var(--muted); font-size: 8pt; }
+.site a:hover { text-decoration: underline; }
+.subtext { grid-column: 3; color: var(--muted); font-size: 7pt; line-height: 1.6; min-width: 0; }
+.subtext a { cursor: pointer; }
+.subtext a:hover { text-decoration: underline; }
+.summary { grid-column: 3; color: var(--ink); font-size: 9pt; line-height: 1.45; max-width: 65ch; padding: 3px 0 2px; }
+.spacer { height: 5px; }
+.more { padding: 10px 0 10px calc(2.2em + 22px); }
+.more a { cursor: pointer; }
+.empty { padding: 10px 0 10px calc(2.2em + 22px); color: var(--muted); }
+.pagehead { padding: 10px 0 0 calc(2.2em + 22px); color: var(--muted); }
+.pagehead b { color: var(--ink); font-weight: normal; }
+
+/* past (by year) */
+.years { padding: 10px 0 0 calc(2.2em + 22px); color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.years a { cursor: pointer; color: var(--ink); }
+.years a.on { font-weight: bold; }
+
+/* footer */
+.foot { border-top: 2px solid var(--rule); margin-top: 6px; padding: 12px 8px 16px; text-align: center; font-size: 8pt; color: var(--muted); display: grid; gap: 12px; }
+.foot .links a { color: var(--ink); }
+.foot label { color: var(--muted); font-size: 10pt; }
+.foot input { font-family: var(--font); font-size: 10pt; background: var(--input-bg); color: var(--ink); border: 1px solid var(--input-border); padding: 1px 3px; width: min(220px, 60vw); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div id="hn">
+  <div class="top">
+    <a class="logo" id="logo" aria-label="Front page">A</a>
+    <div class="nav" id="nav"></div>
+    <span class="right"><a id="theme" title="Toggle theme">theme</a></span>
+  </div>
+  <div id="head"></div>
+  <div class="list" id="list"></div>
+  <div class="foot">
+    <div class="links">
+      <a href="https://www.anthropic.com/research">anthropic.com/research</a> |
+      <a href="https://transformer-circuits.pub">transformer-circuits.pub</a> |
+      <a href="https://alignment.anthropic.com">alignment.anthropic.com</a> |
+      <a href="https://www.anthropic.com/engineering">engineering blog</a>
+    </div>
+    <div><label for="q">Search: </label><input id="q" type="text" autocomplete="off" spellcheck="false"></div>
+    <div id="stamp"></div>
+  </div>
+</div>
+
+<script>
+const POSTS = __POSTS__;
+const UPDATED = "__UPDATED__";
+const PER = 30;
+const ORIGIN = "https://www.anthropic.com/research/";
+const TEAMS = [
+  ["interpretability", "Interpretability"],
+  ["alignment", "Alignment"],
+  ["frontier-red-team", "Frontier Red Team"],
+  ["societal-impacts", "Societal Impacts"],
+  ["economics", "Economics"],
+  ["science", "Science"],
+  ["engineering", "Engineering"],
+];
+const teamSlug = n => n.toLowerCase().replace(/\s+/g, "-");
+
+let saved = new Set();
+try { saved = new Set(JSON.parse(localStorage.getItem("hn-saved") || "[]")); } catch (e) {}
+const persist = () => { try { localStorage.setItem("hn-saved", JSON.stringify([...saved])); } catch (e) {} };
+let opened = new Set();
+
+const state = { view: "new", team: null, topic: null, year: null, q: "", page: 1 };
+
+function readHash() {
+  const h = (location.hash || "").slice(1);
+  if (TEAMS.some(t => t[0] === h)) { state.view = "team"; state.team = h; }
+  else if (h === "past" || h === "saved") state.view = h;
+}
+
+function ago(d) {
+  if (!d) return "date unknown";
+  const then = new Date(d + "T12:00:00Z"), now = new Date();
+  const days = Math.floor((now - then) / 864e5);
+  if (days < 1) return "today";
+  if (days < 2) return "1 day ago";
+  if (days < 31) return days + " days ago";
+  const m = Math.floor(days / 30.44);
+  if (m < 12) return m + (m === 1 ? " month ago" : " months ago");
+  const y = Math.floor(days / 365.25);
+  return y + (y === 1 ? " year ago" : " years ago");
+}
+const fmt = d => d ? new Date(d + "T12:00:00Z").toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" }) : "";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function filtered() {
+  let p = POSTS;
+  if (state.view === "team") p = p.filter(x => x.teams.some(t => teamSlug(t) === state.team));
+  if (state.view === "saved") p = p.filter(x => saved.has(x.slug));
+  if (state.view === "past" && state.year) p = p.filter(x => (x.date || "").startsWith(state.year));
+  if (state.topic) p = p.filter(x => x.topics.includes(state.topic));
+  if (state.q) {
+    const terms = state.q.toLowerCase().split(/\s+/).filter(Boolean);
+    p = p.filter(x => { const hay = (x.title + " " + x.desc + " " + x.teams.join(" ") + " " + x.topics.join(" ")).toLowerCase(); return terms.every(t => hay.includes(t)); });
+  }
+  return p;
+}
+
+function renderNav() {
+  const parts = [`<a class="brand" data-go="new">Research News</a>`];
+  const link = (go, label, on) => `<a data-go="${go}" class="${on ? "on" : ""}">${label}</a>`;
+  const items = [link("new", "new", state.view === "new" && !state.topic && !state.q), link("past", "past", state.view === "past")];
+  TEAMS.forEach(([slug, name]) => items.push(link(slug, name.toLowerCase(), state.view === "team" && state.team === slug)));
+  items.push(link("saved", "saved" + (saved.size ? ` (${saved.size})` : ""), state.view === "saved"));
+  document.getElementById("nav").innerHTML = parts[0] + items.join('<span class="sep">|</span>');
+}
+
+function renderHead() {
+  const el = document.getElementById("head");
+  let html = "";
+  if (state.view === "past") {
+    const years = [...new Set(POSTS.map(p => (p.date || "").slice(0, 4)).filter(Boolean))].sort().reverse();
+    html += `<div class="years">Year: <a data-year="" class="${!state.year ? "on" : ""}">all</a>` +
+      years.map(y => `<a data-year="${y}" class="${state.year === y ? "on" : ""}">${y} <span style="color:var(--muted)">(${POSTS.filter(p => (p.date || "").startsWith(y)).length})</span></a>`).join("") + `</div>`;
+  }
+  const bits = [];
+  if (state.topic) bits.push(`topic <b>${esc(state.topic)}</b> <a data-cleartopic style="cursor:pointer">[clear]</a>`);
+  if (state.q) bits.push(`search <b>“${esc(state.q)}”</b> <a data-clearq style="cursor:pointer">[clear]</a>`);
+  if (bits.length) html += `<div class="pagehead">${bits.join(" · ")} — ${filtered().length} posts</div>`;
+  el.innerHTML = html;
+}
+
+const ARROW = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 0 L10 10 L0 10 Z"/></svg>';
+
+function renderList() {
+  const all = filtered();
+  const start = (state.page - 1) * PER;
+  const rows = all.slice(start, start + PER);
+  const el = document.getElementById("list");
+  if (!rows.length) {
+    el.innerHTML = `<div class="empty">${state.view === "saved" ? "Nothing saved yet. Click the ▲ next to a post to save it here." : "No posts match."}</div>`;
+    return;
+  }
+  el.innerHTML = rows.map((p, i) => {
+    const n = start + i + 1;
+    const url = ORIGIN + p.slug;
+    const teams = p.teams.map(t => `<a data-team="${teamSlug(t)}">${esc(t)}</a>`).join(", ");
+    const topics = p.topics.slice(0, 4).map(t => `<a data-topic="${esc(t)}">${esc(t.toLowerCase())}</a>`).join(" · ");
+    const isOpen = opened.has(p.slug);
+    return `<div class="item">
+      <span class="rank">${n}.</span>
+      <button class="vote ${saved.has(p.slug) ? "saved" : ""}" data-save="${p.slug}" title="${saved.has(p.slug) ? "Unsave" : "Save"}" aria-label="${saved.has(p.slug) ? "Unsave" : "Save"} ${esc(p.title)}">${ARROW}</button>
+      <span class="titleline"><a class="t" href="${url}">${esc(p.title)}</a> <span class="site">(<a href="https://www.anthropic.com/research">anthropic.com</a>)</span></span>
+      <span class="subtext">${teams ? "by " + teams + " | " : ""}<span title="${fmt(p.date)}">${ago(p.date)}</span>${topics ? " | " + topics : ""} | <a data-sum="${p.slug}">${isOpen ? "hide" : "summary"}</a></span>
+      ${isOpen && p.desc ? `<div class="summary">${esc(p.desc)}</div>` : ""}
+    </div><div class="spacer"></div>`;
+  }).join("") + (start + PER < all.length ? `<div class="more"><a data-more>More</a></div>` : "");
+}
+
+function render() {
+  renderNav(); renderHead(); renderList();
+  document.getElementById("stamp").textContent = `${POSTS.length} posts from anthropic.com/research, last updated ${fmt(UPDATED)}.`;
+}
+
+function go(to) {
+  state.page = 1; state.topic = null; state.q = ""; document.getElementById("q").value = "";
+  if (to === "new" || to === "past" || to === "saved") { state.view = to; state.team = null; if (to !== "past") state.year = null; }
+  else { state.view = "team"; state.team = to; }
+  try { history.replaceState(null, "", to === "new" ? location.pathname : "#" + to); } catch (e) {}
+  render(); window.scrollTo(0, 0);
+}
+
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-go],[data-save],[data-team],[data-topic],[data-more],[data-sum],[data-year],[data-cleartopic],[data-clearq],#logo,#theme");
+  if (!a) return;
+  if (a.id === "logo") return go("new");
+  if (a.id === "theme") {
+    const r = document.documentElement, cur = r.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    r.setAttribute("data-theme", cur === "dark" ? "light" : "dark"); return;
+  }
+  if (a.dataset.go) return go(a.dataset.go);
+  if (a.dataset.team) return go(a.dataset.team);
+  if (a.dataset.save) { const s = a.dataset.save; saved.has(s) ? saved.delete(s) : saved.add(s); persist(); renderNav(); renderList(); return; }
+  if (a.dataset.topic) { state.topic = a.dataset.topic; state.page = 1; render(); window.scrollTo(0, 0); return; }
+  if (a.dataset.sum) { const s = a.dataset.sum; opened.has(s) ? opened.delete(s) : opened.add(s); renderList(); return; }
+  if ("more" in a.dataset) { state.page++; renderList(); window.scrollTo(0, 0); return; }
+  if ("year" in a.dataset) { state.year = a.dataset.year || null; state.page = 1; render(); return; }
+  if ("cleartopic" in a.dataset) { state.topic = null; state.page = 1; render(); return; }
+  if ("clearq" in a.dataset) { state.q = ""; document.getElementById("q").value = ""; state.page = 1; render(); return; }
+});
+document.getElementById("q").addEventListener("input", e => { state.q = e.target.value.trim(); state.page = 1; renderHead(); renderList(); });
+
+readHash();
+render();
+</script>
+
+</html>
