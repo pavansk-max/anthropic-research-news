@@ -1,0 +1,28 @@
+name: Update research posts
+
+on:
+  schedule:
+    - cron: "17 13 * * *"   # daily at 13:17 UTC
+  workflow_dispatch:         # "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch new posts and rebuild the page
+        run: python3 update.py
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then
+            echo "No new posts."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add posts.json index.html
+          git commit -m "Add new research posts"
+          git push
