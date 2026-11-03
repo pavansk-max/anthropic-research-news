@@ -1,6 +1,16 @@
 {
- "updated": "2026-11-01",
+ "updated": "2026-11-03",
  "posts": [
+  {
+   "slug": "provable-inference",
+   "title": "Progress on provable inference for large language models",
+   "desc": "Sharing progress on a powerful type of cryptographic proof known as a zkSNARK, which is uniquely fit for provable inference.",
+   "date": "2026-11-02",
+   "teams": [
+    "Frontier Red Team"
+   ],
+   "topics": []
+  },
   {
    "slug": "agents-judgment-calls",
    "title": "How AI agents shape experts’ judgment calls",
