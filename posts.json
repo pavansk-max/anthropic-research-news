@@ -1,6 +1,21 @@
 {
- "updated": "2026-11-03",
+ "updated": "2026-11-05",
  "posts": [
+  {
+   "slug": "investigating-vault-particles-with-claude",
+   "title": "Investigating vault particles with Claude",
+   "desc": "We’re sharing another finding from Anthropic’s biology research lab: the first 3D structure of a vault particle found in prokaryotic cells.",
+   "date": "2026-11-04",
+   "teams": [
+    "Science"
+   ],
+   "topics": [
+    "Life sciences",
+    "Discovery",
+    "Agents",
+    "Research programs"
+   ]
+  },
   {
    "slug": "provable-inference",
    "title": "Progress on provable inference for large language models",
