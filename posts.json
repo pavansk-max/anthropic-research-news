@@ -1,6 +1,22 @@
 {
- "updated": "2026-11-05",
+ "updated": "2026-11-06",
  "posts": [
+  {
+   "slug": "how-researchers-use-claude",
+   "title": "How scientists use Claude",
+   "desc": "In this report, we use privacy-preserving infrastructure to study the scientific use of Claude, Claude Code, and Claude Science. We document how usage varies across scientific fields and research tasks, identify what explains these usage patterns, and outline scenarios for how AI could accelerate research.",
+   "date": "2026-11-05",
+   "teams": [
+    "Economics"
+   ],
+   "topics": [
+    "Discovery",
+    "How people use AI",
+    "Economic Index",
+    "Productivity",
+    "Claude Code"
+   ]
+  },
   {
    "slug": "investigating-vault-particles-with-claude",
    "title": "Investigating vault particles with Claude",
