@@ -1,6 +1,51 @@
 {
- "updated": "2026-11-06",
+ "updated": "2026-11-07",
  "posts": [
+  {
+   "slug": "components-of-agent-memory",
+   "title": "The components of agent memory",
+   "desc": "For Claude to learn from experience, it has to decide what’s worth remembering before it knows what’s next. Here’s how “dreaming” helps it organize memory and correct mistakes.",
+   "date": "2026-11-06",
+   "teams": [
+    "Engineering"
+   ],
+   "topics": [
+    "Agents",
+    "Context engineering",
+    "Agent memory"
+   ]
+  },
+  {
+   "slug": "project-eve-claude-plays-mmorpgs",
+   "title": "Project EVE: Claude plays MMORPGs",
+   "desc": "We put Claude in two EVE games to study how AI agents handle markets and teamwork, where they break down, and what safeguards they might need.",
+   "date": "2026-11-06",
+   "teams": [
+    "Frontier Red Team"
+   ],
+   "topics": [
+    "Agents",
+    "Economic Futures",
+    "Research programs",
+    "Safety evaluations",
+    "Claude Opus",
+    "Coding"
+   ]
+  },
+  {
+   "slug": "teaching-ai-to-build-scientific-models",
+   "title": "Teaching AI to build scientific models",
+   "desc": "AI for Science grantees Jakob Macke, Daniel Gedon, and Stefan Wahl on how AI is starting to change how scientific models are built and interpreted.",
+   "date": "2026-11-06",
+   "teams": [
+    "Science"
+   ],
+   "topics": [
+    "Discovery",
+    "Research programs",
+    "Life sciences"
+   ]
+  },
   {
    "slug": "how-researchers-use-claude",
    "title": "How scientists use Claude",
