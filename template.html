@@ -76,7 +76,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--bar); outline-o
 .pagehead { padding: 10px 0 0 calc(2.2em + 22px); color: var(--muted); }
 .pagehead b { color: var(--ink); font-weight: normal; }
 
-/* past (by year) */
+/* filter rows (years, lab categories) */
 .years { padding: 10px 0 0 calc(2.2em + 22px); color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 10px; }
 .years a { cursor: pointer; color: var(--ink); }
 .years a.on { font-weight: bold; }
@@ -91,7 +91,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--bar); outline-o
 
 <div id="hn">
   <div class="top">
-    <a class="logo" id="logo" aria-label="Front page">A</a>
+    <a class="logo" id="logo" aria-label="Front page">R</a>
     <div class="nav" id="nav"></div>
     <span class="right"><a id="theme" title="Toggle theme">theme</a></span>
   </div>
@@ -100,9 +100,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--bar); outline-o
   <div class="foot">
     <div class="links">
       <a href="https://www.anthropic.com/research">anthropic.com/research</a> |
-      <a href="https://transformer-circuits.pub">transformer-circuits.pub</a> |
-      <a href="https://alignment.anthropic.com">alignment.anthropic.com</a> |
-      <a href="https://www.anthropic.com/engineering">engineering blog</a>
+      <a href="https://openai.com/research/index/">openai.com/research</a> |
+      <a href="https://deepmind.google/blog/">deepmind.google/blog</a> |
+      <a href="https://transformer-circuits.pub">transformer-circuits.pub</a>
     </div>
     <div><label for="q">Search: </label><input id="q" type="text" autocomplete="off" spellcheck="false"></div>
     <div id="stamp"></div>
@@ -113,29 +113,56 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--bar); outline-o
 const POSTS = __POSTS__;
 const UPDATED = "__UPDATED__";
 const PER = 30;
-const ORIGIN = "https://www.anthropic.com/research/";
-const TEAMS = [
-  ["interpretability", "Interpretability"],
-  ["alignment", "Alignment"],
-  ["frontier-red-team", "Frontier Red Team"],
-  ["societal-impacts", "Societal Impacts"],
-  ["economics", "Economics"],
-  ["science", "Science"],
-  ["engineering", "Engineering"],
+const LABS = {
+  anthropic: { name: "anthropic", site: "anthropic.com", home: "https://www.anthropic.com/research" },
+  openai: { name: "openai", site: "openai.com", home: "https://openai.com/research/index/" },
+  deepmind: { name: "deepmind", site: "deepmind.google", home: "https://deepmind.google/blog/" },
+};
+// Cross-lab themes: a post joins a theme by its lab category, its Anthropic topics, or keywords in its title and summary.
+const THEMES = [
+  { slug: "safety", name: "safety",
+    cats: ["Alignment", "Frontier Red Team", "Safety & Alignment", "Responsibility & Safety"],
+    topics: ["Alignment", "Safety evaluations", "Red teaming", "Reward hacking", "Safeguards"],
+    re: /\b(alignment|misalign\w*|safety|red[- ]team\w*|jailbreak\w*|reward hacking|deceptive|deception|scheming|sabotage|oversight|monitorability|chain[- ]of[- ]thought monitor\w*|preparedness|system card|misuse|biosecurity|bioresilience|harmful|adversarial)\b/i },
+  { slug: "interpretability", name: "interpretability",
+    cats: ["Interpretability"], topics: ["Interpretability"],
+    re: /\b(interpretab\w*|mechanistic|sparse autoencoder\w*|dictionary learning|monosemantic\w*|superposition|circuits in|neurons in|attribution graph\w*|explain(?:s|ing)? neurons|gemma scope|steering vectors?|activation steering|introspect\w*|extracting concepts|openai microscope)\b/i },
+  { slug: "science", name: "science",
+    cats: ["Science"], topics: ["Discovery", "Life sciences"],
+    re: /\b(scien\w+|biolog\w*|protein\w*|chemi\w+|drug|molecul\w*|genom\w*|dna|rna|cell(?:s|ular)?|disease\w*|medic\w*|health\w*|clinical|physics|fusion|plasma|weather|climate|materials?|mathemat\w*|math\b|theorem\w*|olympiad|alphafold|alphafold\d?|quantum|astronom\w*|neuroscien\w*|enzyme\w*|wet[- ]lab|crispr|forests?|ecolog\w*|conservation)\b/i },
+  { slug: "agents", name: "agents",
+    cats: [], topics: ["Agents", "Tool use", "Claude Code", "Computer use"],
+    re: /\b(agents?|agentic|tool use|tool[- ]using|computer use|computer-using|browsing|browser|operator|codex|coding|software engineer\w*|swe-?bench|multi-agent|autonomous\w*|assistant that acts|deep research|web navigation)\b/i },
+  { slug: "economics", name: "economics",
+    cats: ["Economics"], topics: ["Labor market", "Economic Index", "Economic Futures", "Productivity"],
+    re: /\b(econom\w+|labou?r markets?|employment|unemployment|workforce|productivity|occupation\w*|wages?|gdpval|future of work)\b/i },
 ];
-const teamSlug = n => n.toLowerCase().replace(/\s+/g, "-");
+const inTheme = (t, p) => p.teams.some(c => t.cats.includes(c)) || p.topics.some(c => t.topics.includes(c)) || t.re.test(p.title + " " + p.desc);
+const slugify = n => n.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+// categories per lab, most posts first
+const CATS = {};
+for (const lab of Object.keys(LABS)) {
+  const c = new Map();
+  POSTS.filter(p => p.lab === lab).forEach(p => p.teams.forEach(t => c.set(t, (c.get(t) || 0) + 1)));
+  CATS[lab] = [...c.entries()].sort((a, b) => b[1] - a[1]).map(([name, n]) => ({ name, slug: slugify(name), n }));
+}
 
 let saved = new Set();
 try { saved = new Set(JSON.parse(localStorage.getItem("hn-saved") || "[]")); } catch (e) {}
 const persist = () => { try { localStorage.setItem("hn-saved", JSON.stringify([...saved])); } catch (e) {} };
 let opened = new Set();
 
-const state = { view: "new", team: null, topic: null, year: null, q: "", page: 1 };
+const state = { view: "new", theme: null, lab: null, cat: null, topic: null, year: null, q: "", page: 1 };
 
 function readHash() {
   const h = (location.hash || "").slice(1);
-  if (TEAMS.some(t => t[0] === h)) { state.view = "team"; state.team = h; }
-  else if (h === "past" || h === "saved") state.view = h;
+  if (THEMES.some(t => t.slug === h)) { state.view = "theme"; state.theme = h; return; }
+  if (LABS[h]) { state.view = "lab"; state.lab = h; return; }
+  if (h === "past" || h === "saved") { state.view = h; return; }
+  // older links like #interpretability point at an Anthropic team
+  const cat = CATS.anthropic.find(c => c.slug === h);
+  if (cat) { state.view = "lab"; state.lab = "anthropic"; state.cat = cat.slug; }
 }
 
 function ago(d) {
@@ -155,24 +182,28 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 
 function filtered() {
   let p = POSTS;
-  if (state.view === "team") p = p.filter(x => x.teams.some(t => teamSlug(t) === state.team));
-  if (state.view === "saved") p = p.filter(x => saved.has(x.slug));
+  if (state.view === "lab") {
+    p = p.filter(x => x.lab === state.lab);
+    if (state.cat) p = p.filter(x => x.teams.some(t => slugify(t) === state.cat));
+  }
+  if (state.view === "theme") { const t = THEMES.find(t => t.slug === state.theme); p = p.filter(x => inTheme(t, x)); }
+  if (state.view === "saved") p = p.filter(x => saved.has(x.id));
   if (state.view === "past" && state.year) p = p.filter(x => (x.date || "").startsWith(state.year));
   if (state.topic) p = p.filter(x => x.topics.includes(state.topic));
   if (state.q) {
     const terms = state.q.toLowerCase().split(/\s+/).filter(Boolean);
-    p = p.filter(x => { const hay = (x.title + " " + x.desc + " " + x.teams.join(" ") + " " + x.topics.join(" ")).toLowerCase(); return terms.every(t => hay.includes(t)); });
+    p = p.filter(x => { const hay = (x.title + " " + x.desc + " " + x.lab + " " + x.teams.join(" ") + " " + x.topics.join(" ")).toLowerCase(); return terms.every(t => hay.includes(t)); });
   }
   return p;
 }
 
 function renderNav() {
-  const parts = [`<a class="brand" data-go="new">Research News</a>`];
   const link = (go, label, on) => `<a data-go="${go}" class="${on ? "on" : ""}">${label}</a>`;
   const items = [link("new", "new", state.view === "new" && !state.topic && !state.q), link("past", "past", state.view === "past")];
-  TEAMS.forEach(([slug, name]) => items.push(link(slug, name.toLowerCase(), state.view === "team" && state.team === slug)));
+  THEMES.forEach(t => items.push(link(t.slug, t.name, state.view === "theme" && state.theme === t.slug)));
+  Object.keys(LABS).forEach(lab => items.push(link(lab, LABS[lab].name, state.view === "lab" && state.lab === lab)));
   items.push(link("saved", "saved" + (saved.size ? ` (${saved.size})` : ""), state.view === "saved"));
-  document.getElementById("nav").innerHTML = parts[0] + items.join('<span class="sep">|</span>');
+  document.getElementById("nav").innerHTML = `<a class="brand" data-go="new">Research News</a>` + items.join('<span class="sep">|</span>');
 }
 
 function renderHead() {
@@ -182,6 +213,17 @@ function renderHead() {
     const years = [...new Set(POSTS.map(p => (p.date || "").slice(0, 4)).filter(Boolean))].sort().reverse();
     html += `<div class="years">Year: <a data-year="" class="${!state.year ? "on" : ""}">all</a>` +
       years.map(y => `<a data-year="${y}" class="${state.year === y ? "on" : ""}">${y} <span style="color:var(--muted)">(${POSTS.filter(p => (p.date || "").startsWith(y)).length})</span></a>`).join("") + `</div>`;
+  }
+  if (state.view === "theme") {
+    const t = THEMES.find(t => t.slug === state.theme);
+    const ps = POSTS.filter(p => inTheme(t, p));
+    html += `<div class="years">Lab: ` + Object.keys(LABS).map(l => `${LABS[l].name} <span style="color:var(--muted)">(${ps.filter(p => p.lab === l).length})</span>`).join(" ") +
+      ` <span style="color:var(--muted)">· matched by lab category and keywords, so a rough guide</span></div>`;
+  }
+  if (state.view === "lab") {
+    const total = POSTS.filter(p => p.lab === state.lab).length;
+    html += `<div class="years">${state.lab === "anthropic" ? "Team" : "Category"}: <a data-cat="" class="${!state.cat ? "on" : ""}">all <span style="color:var(--muted)">(${total})</span></a>` +
+      CATS[state.lab].map(c => `<a data-cat="${c.slug}" class="${state.cat === c.slug ? "on" : ""}">${esc(c.name.toLowerCase())} <span style="color:var(--muted)">(${c.n})</span></a>`).join("") + `</div>`;
   }
   const bits = [];
   if (state.topic) bits.push(`topic <b>${esc(state.topic)}</b> <a data-cleartopic style="cursor:pointer">[clear]</a>`);
@@ -203,15 +245,16 @@ function renderList() {
   }
   el.innerHTML = rows.map((p, i) => {
     const n = start + i + 1;
-    const url = ORIGIN + p.slug;
-    const teams = p.teams.map(t => `<a data-team="${teamSlug(t)}">${esc(t)}</a>`).join(", ");
+    const lab = LABS[p.lab];
+    const cats = p.teams.map(t => `<a data-lab="${p.lab}" data-catlink="${slugify(t)}">${esc(p.lab === "anthropic" ? t : t.toLowerCase())}</a>`).join(", ");
     const topics = p.topics.slice(0, 4).map(t => `<a data-topic="${esc(t)}">${esc(t.toLowerCase())}</a>`).join(" · ");
-    const isOpen = opened.has(p.slug);
+    const isOpen = opened.has(p.id);
+    const isSaved = saved.has(p.id);
     return `<div class="item">
       <span class="rank">${n}.</span>
-      <button class="vote ${saved.has(p.slug) ? "saved" : ""}" data-save="${p.slug}" title="${saved.has(p.slug) ? "Unsave" : "Save"}" aria-label="${saved.has(p.slug) ? "Unsave" : "Save"} ${esc(p.title)}">${ARROW}</button>
-      <span class="titleline"><a class="t" href="${url}">${esc(p.title)}</a> <span class="site">(<a href="https://www.anthropic.com/research">anthropic.com</a>)</span></span>
-      <span class="subtext">${teams ? "by " + teams + " | " : ""}<span title="${fmt(p.date)}">${ago(p.date)}</span>${topics ? " | " + topics : ""} | <a data-sum="${p.slug}">${isOpen ? "hide" : "summary"}</a></span>
+      <button class="vote ${isSaved ? "saved" : ""}" data-save="${esc(p.id)}" title="${isSaved ? "Unsave" : "Save"}" aria-label="${isSaved ? "Unsave" : "Save"} ${esc(p.title)}">${ARROW}</button>
+      <span class="titleline"><a class="t" href="${esc(p.url)}">${esc(p.title)}</a> <span class="site">(<a data-go="${p.lab}">${lab.site}</a>)</span></span>
+      <span class="subtext">${cats ? (p.lab === "anthropic" ? "by " : "in ") + cats + " | " : ""}<span title="${fmt(p.date)}">${ago(p.date)}</span>${topics ? " | " + topics : ""}${p.desc ? ` | <a data-sum="${esc(p.id)}">${isOpen ? "hide" : "summary"}</a>` : ""}</span>
       ${isOpen && p.desc ? `<div class="summary">${esc(p.desc)}</div>` : ""}
     </div><div class="spacer"></div>`;
   }).join("") + (start + PER < all.length ? `<div class="more"><a data-more>More</a></div>` : "");
@@ -219,19 +262,24 @@ function renderList() {
 
 function render() {
   renderNav(); renderHead(); renderList();
-  document.getElementById("stamp").textContent = `${POSTS.length} posts from anthropic.com/research, last updated ${fmt(UPDATED)}.`;
+  const counts = Object.keys(LABS).map(l => `${POSTS.filter(p => p.lab === l).length} ${LABS[l].site}`).join(", ");
+  document.getElementById("stamp").textContent = `${POSTS.length} research posts (${counts}), last updated ${fmt(UPDATED)}.`;
 }
 
-function go(to) {
-  state.page = 1; state.topic = null; state.q = ""; document.getElementById("q").value = "";
-  if (to === "new" || to === "past" || to === "saved") { state.view = to; state.team = null; if (to !== "past") state.year = null; }
-  else { state.view = "team"; state.team = to; }
-  try { history.replaceState(null, "", to === "new" ? location.pathname : "#" + to); } catch (e) {}
+function setHash(h) { try { history.replaceState(null, "", h ? "#" + h : location.pathname); } catch (e) {} }
+
+function go(to, cat) {
+  state.page = 1; state.topic = null; state.q = ""; state.cat = cat || null; document.getElementById("q").value = "";
+  state.theme = null;
+  if (LABS[to]) { state.view = "lab"; state.lab = to; }
+  else if (THEMES.some(t => t.slug === to)) { state.view = "theme"; state.theme = to; state.lab = null; }
+  else { state.view = to; state.lab = null; if (to !== "past") state.year = null; }
+  setHash(to === "new" ? "" : to);
   render(); window.scrollTo(0, 0);
 }
 
 document.addEventListener("click", e => {
-  const a = e.target.closest("[data-go],[data-save],[data-team],[data-topic],[data-more],[data-sum],[data-year],[data-cleartopic],[data-clearq],#logo,#theme");
+  const a = e.target.closest("[data-go],[data-save],[data-catlink],[data-cat],[data-topic],[data-more],[data-sum],[data-year],[data-cleartopic],[data-clearq],#logo,#theme");
   if (!a) return;
   if (a.id === "logo") return go("new");
   if (a.id === "theme") {
@@ -239,7 +287,8 @@ document.addEventListener("click", e => {
     r.setAttribute("data-theme", cur === "dark" ? "light" : "dark"); return;
   }
   if (a.dataset.go) return go(a.dataset.go);
-  if (a.dataset.team) return go(a.dataset.team);
+  if (a.dataset.catlink) return go(a.dataset.lab, a.dataset.catlink);
+  if ("cat" in a.dataset) { state.cat = a.dataset.cat || null; state.page = 1; render(); return; }
   if (a.dataset.save) { const s = a.dataset.save; saved.has(s) ? saved.delete(s) : saved.add(s); persist(); renderNav(); renderList(); return; }
   if (a.dataset.topic) { state.topic = a.dataset.topic; state.page = 1; render(); window.scrollTo(0, 0); return; }
   if (a.dataset.sum) { const s = a.dataset.sum; opened.has(s) ? opened.delete(s) : opened.add(s); renderList(); return; }
@@ -253,5 +302,4 @@ document.getElementById("q").addEventListener("input", e => { state.q = e.target
 readHash();
 render();
 </script>
-
 </html>
