@@ -1,6 +1,28 @@
 {
- "updated": "2026-11-07",
+ "updated": "2026-11-10",
  "posts": [
+  {
+   "id": "deepmind:introducing-alphaproof-code",
+   "lab": "deepmind",
+   "url": "https://deepmind.google/blog/introducing-alphaproof-code/",
+   "title": "Formal Verification of Signal’s Protocol with Gemini",
+   "desc": "AlphaProof Code agents wrote over three million lines of machine-checked proof in Lean to verify the core cryptographic protections in Signal down to machine instructions.",
+   "date": "2026-11-10",
+   "teams": [
+    "Research"
+   ],
+   "topics": []
+  },
+  {
+   "id": "claude-electronics-design",
+   "lab": "anthropic",
+   "url": "https://www.anthropic.com/research/claude-electronics-design",
+   "title": "Claude can design electronic prototypes from start to finish",
+   "desc": "We asked Claude to design three electronic devices: a speakerphone, a voice-assistant hub, and a handheld virtual pet. The prototypes worked without any fixes to their circuitry.",
+   "date": "2026-11-09",
+   "teams": [],
+   "topics": []
+  },
   {
    "id": "components-of-agent-memory",
    "lab": "anthropic",
