@@ -1,6 +1,18 @@
 {
- "updated": "2026-11-12",
+ "updated": "2026-11-13",
  "posts": [
+  {
+   "id": "deepmind:opening-the-datasets-behind-our-ai-weather-models",
+   "lab": "deepmind",
+   "url": "https://deepmind.google/blog/opening-the-datasets-behind-our-ai-weather-models/",
+   "title": "PARDIG & SatWeave: Foundational Datasets for Earth Science",
+   "desc": "Google DeepMind introduces PARDIG and SatWeave: open, multi-decade foundational datasets enabling global precipitation mapping and geostationary satellite mosaics.",
+   "date": "2026-11-13",
+   "teams": [
+    "Science"
+   ],
+   "topics": []
+  },
   {
    "id": "deepmind:alphagenome-2-deciphering-how-cells-read-dna-to-better-understand-disease",
    "lab": "deepmind",
