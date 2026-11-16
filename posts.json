@@ -1,6 +1,16 @@
 {
- "updated": "2026-11-14",
+ "updated": "2026-11-16",
  "posts": [
+  {
+   "id": "coordinated-vulnerability-disclosure-timelines",
+   "lab": "anthropic",
+   "url": "https://www.anthropic.com/research/coordinated-vulnerability-disclosure-timelines",
+   "title": "Updating our coordinated vulnerability disclosure policy timelines",
+   "desc": "We’re shortening our vulnerability disclosure window from 90 days to 30 days for high- and critical-severity issues, and to 45 days for all other issues.",
+   "date": "2026-11-16",
+   "teams": [],
+   "topics": []
+  },
   {
    "id": "deepmind:opening-the-datasets-behind-our-ai-weather-models",
    "lab": "deepmind",
