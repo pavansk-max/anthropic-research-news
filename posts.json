@@ -1,6 +1,18 @@
 {
- "updated": "2026-11-21",
+ "updated": "2026-11-23",
  "posts": [
+  {
+   "id": "openai:perplexity-and-intelligence",
+   "lab": "openai",
+   "url": "https://openai.com/index/perplexity-and-intelligence",
+   "title": "Perplexity and Intelligence",
+   "desc": "How perplexity measures progress in AI models, and why it could help developers establish a shared approach to evaluating emerging capabilities.",
+   "date": "2026-11-22",
+   "teams": [
+    "Research"
+   ],
+   "topics": []
+  },
   {
    "id": "openai:introducing-medchembench",
    "lab": "openai",
