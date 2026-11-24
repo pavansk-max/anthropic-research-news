@@ -1,6 +1,28 @@
 {
- "updated": "2026-11-23",
+ "updated": "2026-11-24",
  "posts": [
+  {
+   "id": "working-with-ai",
+   "lab": "anthropic",
+   "url": "https://www.anthropic.com/research/working-with-ai",
+   "title": "Working with AI",
+   "desc": "We interviewed people at 58 companies that use Claude about how AI is changing their work. They described few layoffs but reduced hiring, and said the most valuable uses of AI often involved reorganizing roles and workplaces around it.",
+   "date": "2026-11-23",
+   "teams": [],
+   "topics": []
+  },
+  {
+   "id": "deepmind:finding-faster-quantum-algorithms-with-agents-and-formal-verification",
+   "lab": "deepmind",
+   "url": "https://deepmind.google/blog/finding-faster-quantum-algorithms-with-agents-and-formal-verification/",
+   "title": "Finding faster quantum algorithms with agents and formal verification",
+   "desc": "How using agent teams and formal verification can improve quantum algorithms for modelling fusion energy, chemistry and enzymes.",
+   "date": "2026-11-23",
+   "teams": [
+    "Science"
+   ],
+   "topics": []
+  },
   {
    "id": "openai:perplexity-and-intelligence",
    "lab": "openai",
