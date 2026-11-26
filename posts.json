@@ -1,6 +1,28 @@
 {
- "updated": "2026-11-24",
+ "updated": "2026-11-26",
  "posts": [
+  {
+   "id": "migrating-api-to-rust",
+   "lab": "anthropic",
+   "url": "https://www.anthropic.com/research/migrating-api-to-rust",
+   "title": "Migrating our Messages API to Rust",
+   "desc": "How we used the existing Messages API to verify the new one, with teams of Claude agents tracking down and fixing differences between the Python and Rust versions.",
+   "date": "2026-11-25",
+   "teams": [],
+   "topics": []
+  },
+  {
+   "id": "deepmind:interpreting-mass-spectra-with-google-antigravity",
+   "lab": "deepmind",
+   "url": "https://deepmind.google/blog/interpreting-mass-spectra-with-google-antigravity/",
+   "title": "Identifying Molecules with Mass Spec Skills for Antigravity",
+   "desc": "Mass Spec Skills for Google Antigravity pairs Gemini’s chemical reasoning with established mass spectrometry tools to interpret tandem mass spectra at scale.",
+   "date": "2026-11-25",
+   "teams": [
+    "Science"
+   ],
+   "topics": []
+  },
   {
    "id": "working-with-ai",
    "lab": "anthropic",
